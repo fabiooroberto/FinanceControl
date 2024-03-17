@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  webapi:
+    image: finance
+    container_name: finance-api
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5000
+    build: .
+    ports:
+      - "5000:5000"
