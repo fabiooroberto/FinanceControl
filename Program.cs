@@ -1,4 +1,5 @@
 using FinanceControl.Endpoints;
+using FinanceControl.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,11 +8,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
+
+if(app.Environment.IsDevelopment())
+{
+    app.ApplyMigrations();
+}
 
 app.UseHttpsRedirection();
 

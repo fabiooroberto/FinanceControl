@@ -8,3 +8,15 @@ services:
     build: .
     ports:
       - "5000:5000"
+
+  finance-database:
+    image: postgres:latest
+    container_name: finance.database
+    environment:
+      - POSTGRES_DB=finances
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/finance-db:/var/lib/postgressql/data
+    ports:
+      - 5432:5432
