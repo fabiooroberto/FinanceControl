@@ -1,10 +1,13 @@
+using FinanceControl.Database;
+using Microsoft.EntityFrameworkCore;
+
 namespace FinanceControl.Extensions;
 
 public static class MigrationExtensions
 {
     public static void ApplyMigrations(this WebApplication app)
     {
-        using var scope = app.Sevices.CreateScope();
+        using var scope = app.Services.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 

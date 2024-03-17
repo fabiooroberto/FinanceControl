@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace FinanceControl.Database;
 
 public class ApplicationDbContext : DbContext {
@@ -8,13 +10,18 @@ public class ApplicationDbContext : DbContext {
         {
             #region seed
             modelBuilder.Entity<Category>().HasData(
-                new Category() { Id = Guid.NewId(), Name = "Course"}
-            )
+                new Category("Course")
+            );
             #endregion
         }
     }
 
 public class Category {
-    public Guid Id { get; }
+    public Category(string name)
+    {
+        Id = Guid.NewGuid();
+        Name = name;
+    }
+    public Guid Id { get; set; }
     public string Name { get; set; }
 }
