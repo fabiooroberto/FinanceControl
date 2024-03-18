@@ -1,15 +1,15 @@
 version: '3.9'
 services:
-  webapi:
+  finance.api:
     image: finance
-    container_name: finance-api
+    container_name: finance.api
     environment:
       - ASPNETCORE_HTTP_PORTS=5000
     build: .
     ports:
       - "5000:5000"
 
-  finance-database:
+  finance.database:
     image: postgres:latest
     container_name: finance.database
     environment:
@@ -17,6 +17,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./.containers/finance-db:/var/lib/postgressql/data
+      - ./.containers/finance-db:/var/lib/postgresql/data
     ports:
       - 5432:5432
