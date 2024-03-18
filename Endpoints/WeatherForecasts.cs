@@ -22,7 +22,7 @@ public static class WeatherForecasts
                     summaries[Random.Shared.Next(summaries.Length)]
                 ))
                 .ToArray();
-            return forecast;
+            return categories;
         })
         .WithName("GetWeatherForecast")
         .WithOpenApi();
