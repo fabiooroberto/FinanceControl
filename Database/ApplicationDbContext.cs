@@ -2,21 +2,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceControl.Database;
 
-public class ApplicationDbContext : DbContext {
-        public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options) : base (options) { }
-        public DbSet<Category> Categories { get; set; }
+public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public DbSet<Category> Categories { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            #region seed
-            modelBuilder.Entity<Category>().HasData(
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+
+        modelBuilder.Entity<Category>()
+            .Property(b => b.Name)
+            .HasMaxLength(255);
+
+        #region seed
+        modelBuilder.Entity<Category>().HasData(
                 new Category("Course")
             );
-            #endregion
-        }
+        #endregion
     }
+}
 
-public class Category {
+public class Category
+{
     public Category(string name)
     {
         Id = Guid.NewGuid();
