@@ -1,17 +1,26 @@
 version: '3.9'
+
+networks:
+  finances.ntw:
+    driver: bridge 
+
 services:
-  finance.api:
+  finances.api:
     image: finance
-    container_name: finance.api
+    container_name: finances.api
+    depends_on:
+      - finances.database
     environment:
       - ASPNETCORE_HTTP_PORTS=5000
     build: .
     ports:
       - "5000:5000"
+    networks:
+      - finances.ntw
 
-  finance.database:
+  finances.database:
     image: postgres:latest
-    container_name: finance.database
+    container_name: finances.database
     environment:
       - POSTGRES_DB=finances
       - POSTGRES_USER=postgres
@@ -20,3 +29,5 @@ services:
       - ./.containers/finance-db:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - finances.ntw
