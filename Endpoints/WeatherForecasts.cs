@@ -1,27 +1,28 @@
 using FinanceControl.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace FinanceControl.Endpoints;
 
 public static class WeatherForecasts
 {
-    public static void MapWeatherForecasts(this IEndpointRouteBuilder app)
+    public static void MapWeatherEndpoints(this IEndpointRouteBuilder app)
     {
-        var summaries = new[]
+        app.MapGet("/weather", async (
+            ApplicationDbContext context, 
+            IDistributedCache cache, 
+            CancellationToken ct) =>
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-        app.MapGet("/weather", async (ApplicationDbContext context) =>
-        {
-            var categories = await context.Categories.ToListAsync();
-            var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-                .ToArray();
+            var categories = await cache.GetAsync("finances-all",
+                async token => 
+                {
+                    var category = await context.Categories
+                    .AsNoTracking()
+                    .ToListAsync();
+                    return category;
+                }, 
+                CacheOptions.DefaultExpiration,
+                ct);
             return categories;
         })
         .WithName("GetWeatherForecast")

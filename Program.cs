@@ -2,33 +2,33 @@ using FinanceControl.Endpoints;
 using FinanceControl.Database;
 using FinanceControl.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    options.SwaggerDoc("v1", info: new OpenApiInfo {
+        Title = "Api com Docker",
+        Description = $"Api de Teste com docker compose, postgres and redis cache <strong>({builder.Environment.EnvironmentName})</strong>"
+    });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("Database"))
 );
 
+builder.Services.AddStackExchangeRedisCache(options =>
+    options.Configuration = builder.Configuration.GetConnectionString("Cache"));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.ApplyMigrations();
 
 app.UseHttpsRedirection();
 
-app.MapWeatherForecasts();
+app.MapWeatherEndpoints();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

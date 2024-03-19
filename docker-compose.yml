@@ -8,10 +8,14 @@ services:
   finances.api:
     image: finance
     container_name: finances.api
+    restart: always
     depends_on:
       - finances.database
+      - finances.cache
     environment:
       - ASPNETCORE_HTTP_PORTS=5000
+      - Database=Host=finances.database;Port=5432;Database=finances;Username=postgres;Password=postgres;Include Error Detail=true
+      - Cache=finances.cache:6379
     build: .
     ports:
       - "5000:5000"
@@ -21,6 +25,7 @@ services:
   finances.database:
     image: postgres:latest
     container_name: finances.database
+    restart: always
     environment:
       - POSTGRES_DB=finances
       - POSTGRES_USER=postgres
@@ -29,5 +34,13 @@ services:
       - ./.containers/finance-db:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - finances.ntw
+  
+  finances.cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
     networks:
       - finances.ntw
